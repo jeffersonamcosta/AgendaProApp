@@ -24,16 +24,12 @@ namespace AgendaProApp
             InitializeComponent();
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
 
         private async void Login_click(object sender, RoutedEventArgs e)
         {
             string usuario = this.usuario.Text;
-            string senha = this.senha.Text;
+            string senha = this.senha.Password;
             Config.Load();
 
             if (string.IsNullOrWhiteSpace(usuario) || string.IsNullOrWhiteSpace(senha))

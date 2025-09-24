@@ -22,16 +22,18 @@
                      FontFamily="Arial" 
                      FontSize="18"
                      Margin="0,0,0,10"
-                     TextChanged="TextBox_TextChanged"/>
+                   />
 
-            <TextBox x:Name="senha" 
-                     Text="admin" 
-                     Height="25"
-                     TextAlignment="Center"
-                     FontFamily="Arial" 
+            <PasswordBox x:Name="senha" 
+                    Password="admin"                         
+                     Height="25"               
+                 
+                         
+                         
+                         FontFamily="Arial" 
                      FontSize="18"
-                     Margin="0,0,0,10"
-                     TextChanged="TextBox_TextChanged"/>
+                     Margin="0,0,0,10"              
+                     />
 
             <Button x:Name="Login" 
                     Content="LOGIN" 

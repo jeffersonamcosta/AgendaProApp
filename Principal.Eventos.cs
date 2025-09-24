@@ -50,10 +50,12 @@ namespace AgendaProApp
                 table_eventos.Columns.Add("Id", typeof(int));
                 table_eventos.Columns.Add("Nome", typeof(string));
                 table_eventos.Columns.Add("DataInicio", typeof(DateTime));
-                table_eventos.Columns.Add("DataFim", typeof(DateTime));
-                table_eventos.Columns.Add("Ativo", typeof(bool));
+                table_eventos.Columns.Add("DataFim", typeof(DateTime));               
                 table_eventos.Columns.Add("Orcamento", typeof(decimal));
                 table_eventos.Columns.Add("CapacidadeMaxima", typeof(int));
+                table_eventos.Columns.Add("Endereco", typeof(string));
+                table_eventos.Columns.Add("OBS", typeof(string));
+                table_eventos.Columns.Add("Ativo", typeof(bool));
 
                 _eventos.Clear();
                 foreach (var item in json.RootElement.EnumerateArray())
@@ -66,9 +68,11 @@ namespace AgendaProApp
                         item.GetProperty("nome").GetString(),
                         item.GetProperty("dataInicio").GetDateTime(),
                         item.GetProperty("dataFim").GetDateTime(),
-                        item.TryGetProperty("ativo", out var ativo) && ativo.GetBoolean(),
                         item.TryGetProperty("orcamentoMaximo", out var orcamento) ? orcamento.GetDecimal() : 0,
-                        item.TryGetProperty("capacidadeMaxima", out var capacidade) ? capacidade.GetInt32() : 0
+                        item.TryGetProperty("capacidadeMaxima", out var capacidade) ? capacidade.GetInt32() : 0,
+                        item.TryGetProperty("endereco", out var endereco) ? endereco.GetString() : "",
+                        item.TryGetProperty("observacoes", out var obs) ? obs.GetString() : "",
+                        item.TryGetProperty("ativo", out var ativo) && ativo.GetBoolean()
                     );
                 }
 
@@ -207,6 +211,7 @@ namespace AgendaProApp
             TELA_Eventos_txtOrcamentousado_update();
         }
 
+
         private void TELA_Eventos_txtOrcamentousado_update()
         {
             Evento_txtOrcamentousado.Text = "";
@@ -286,6 +291,7 @@ namespace AgendaProApp
                 }
 
                 TELA_Eventos_txtOrcamentousado_update();
+                Tela_Eventos_txtCapacidadeUsada_update();
             }
             catch (Exception ex)
             {
@@ -371,6 +377,27 @@ namespace AgendaProApp
             json["servicosIds"] = servicosids;
 
             return json;
+        }
+
+        private void Evento_txtCEP_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (Evento_txtCEP.Text.Length == 8 && !string.IsNullOrWhiteSpace(Evento_txtCEP.Text))
+            {
+                Evento_txtEndereco.Text = GetEndAPI_formatado(Evento_txtCEP.Text);
+            }
+
+        }
+        private void TELA_Eventos_Participantes_DTG_CellEditEnding(object sender, System.Windows.Controls.DataGridCellEditEndingEventArgs e)
+        {
+            Tela_Eventos_txtCapacidadeUsada_update();
+        }
+        private void Tela_Eventos_txtCapacidadeUsada_update()
+        {
+            int total = 0;
+
+            if (TELA_Eventos_Participantes_DTG.ItemsSource is DataView view) { foreach (DataRowView row in view) { bool marcado = row["Convidado"] != DBNull.Value && (bool)row["Selecionado"]; if (marcado) { total++; } } }
+            Evento_txtCapacidadeUsado.Text = total.ToString();
+
         }
 
     }

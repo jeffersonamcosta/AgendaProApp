@@ -6,12 +6,13 @@ using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Net.Http;
 
 namespace AgendaProApp
 {
     public partial class Principal
     {
-    
+
         private static readonly Regex regexHoraValida = new Regex(@"^[0-9:]+$");
 
         private void MostrarTela(Grid telaVisivel)
@@ -29,6 +30,7 @@ namespace AgendaProApp
 
         private void BtTelaFornecedores_Click(object sender, RoutedEventArgs e)
         {
+            TELA_Fornecedor_Servicos_DTG_inciar();
             MostrarTela(TELA_Fornecedores);
         }
 
@@ -104,5 +106,45 @@ namespace AgendaProApp
                 }
             }
         }
+
+        private async Task<JsonDocument?> GetEndAPI(string cep)
+        {
+            if (string.IsNullOrWhiteSpace(cep))
+                return null;
+            var url = $"https://viacep.com.br/ws/{cep}/json/";
+
+            using var httpClient = new HttpClient();
+            var response = await httpClient.GetStringAsync(url);
+
+            if (string.IsNullOrWhiteSpace(response))
+                return null;
+
+            return JsonDocument.Parse(response);
+        }
+
+
+        private string GetEndAPI_formatado(string cep)
+        {
+            if (string.IsNullOrWhiteSpace(cep))
+                return string.Empty;
+
+            var url = $"https://viacep.com.br/ws/{cep}/json/";
+
+            using (var httpClient = new HttpClient())
+            {
+                var response = httpClient.GetStringAsync(url).GetAwaiter().GetResult();
+                using var json = JsonDocument.Parse(response);
+                var root = json.RootElement;
+
+                var logradouro = root.TryGetProperty("logradouro", out var l) ? l.GetString() : "";
+                var bairro = root.TryGetProperty("bairro", out var b) ? b.GetString() : "";
+                var localidade = root.TryGetProperty("localidade", out var c) ? c.GetString() : "";
+                var uf = root.TryGetProperty("uf", out var u) ? u.GetString() : "";
+
+                return $"{logradouro}, {bairro}, {localidade} - {uf}".Trim().Trim(',', '-');
+            }
+        }
+
+
     }
 }

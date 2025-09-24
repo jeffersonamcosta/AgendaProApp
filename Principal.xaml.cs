@@ -16,7 +16,9 @@ namespace AgendaProApp
         {
             InitializeComponent();
             this.api = api;
-            TELA_Fornecedor_Servicos_DTG_inciar();
+            
         }
+
+
     }
 }
