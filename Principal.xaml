@@ -92,11 +92,11 @@
             </StackPanel>
 
             <!-- DataGrid -->
-            <DataGrid x:Name="TELA_Participantes_DTG" Grid.Row="2" AutoGenerateColumns="True" Margin="0,0,0,0" SelectionChanged="TELA_Participantes_DTG_seleciona" IsReadOnly="True"/>
+            <DataGrid x:Name="TELA_Participantes_DTG" Grid.Row="2" AutoGenerateColumns="True" Margin="0,0,0,0"/>
         </Grid>
 
         <!-- TELA_Fornecedores -->
-        <Grid Grid.Column="1" Margin="10,10,10,10" Visibility="Visible" x:Name="TELA_Fornecedores">
+        <Grid Grid.Column="1" Margin="10,10,10,10" Visibility="Hidden" x:Name="TELA_Fornecedores">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -154,7 +154,7 @@
                 <Button x:Name="TELA_Fornecedor_btnAtualizar" Content="Atualizar" Width="60" Margin="5" Click="TELA_Fornecedor_btnAtualizar_Click"/>
                 <Button x:Name="TELA_Fornecedor_btnPesquisar" Content="Pesquisar" Width="60" Margin="5" Click="TELA_Fornecedor_btnPesquisar_Click"/>
                 <Button x:Name="TELA_Fornecedor_btnLimpar" Content="Limpar" Width="60" Margin="5" Click="TELA_Fornecedor_btnLimpar_Click"/>
-                
+
             </StackPanel>
 
             <!-- DataGrids lado a lado -->
@@ -181,6 +181,182 @@
                   Margin="5,0,0,0"
                   InitializingNewItem="TELA_Fornecedor_Servicos_DTG_InitializingNewItem"
                           />
+            </Grid>
+        </Grid>
+
+        <!-- TELA_Eventos -->
+        <Grid Grid.Column="1" Margin="10,10,10,10" Visibility="Visible" x:Name="TELA_Eventos">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Campos do Evento -->
+                <RowDefinition Height="Auto"/>
+                <!-- Botões -->
+                <RowDefinition Height="*"/>
+                <!-- DataGrids -->
+            </Grid.RowDefinitions>
+
+            <!-- Campos do Evento -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Nome / evento / ativo-->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="0">
+                    <Label Content="Evento:" Width="50"/>
+                    <TextBox x:Name="Evento_txtNome" Width="150" MaxLength="200"/>
+                    <Label Content="Ativo:"/>
+                    <CheckBox x:Name="Evento_chkAtivo" IsChecked="True" Margin="0,5,5,0"/>
+                </StackPanel>
+
+                <!-- Data de início -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="1">
+                    <Label Content="Início:" Width="50"/>
+                    <DatePicker x:Name="Evento_dpInicio" Width="150"/>
+                    <TextBox x:Name="Evento_txtHRInicio" Width="50" MaxLength="5" Margin="5,0,0,0"
+             PreviewTextInput="Hora_PreviewTextInput"
+             LostFocus="Hora_LostFocus"/>
+                </StackPanel>
+
+                <!-- Data de fim -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="1" Grid.Row="1">
+                    <Label Content="Fim:" Width="50"/>
+                    <DatePicker x:Name="Evento_dpFim" Width="150"/>
+                    <TextBox x:Name="Evento_txtHRFim" Width="50" MaxLength="5" Margin="5,0,0,0"
+             PreviewTextInput="Hora_PreviewTextInput"
+             LostFocus="Hora_LostFocus"/>
+                </StackPanel>
+
+                <!-- CEP -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="0" Grid.Row="2">
+
+
+                    <Label Content="CEP:" Width="50"/>
+                    <TextBox x:Name="Evento_txtCEP" Width="50" MaxLength="9"/>
+                </StackPanel>
+
+                <!-- Local / Endereço -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="1" Grid.Row="2">
+                    <Label Content="Local:" Width="50"/>
+                    <TextBox x:Name="Evento_txtEndereco" Width="205" MaxLength="200"/>
+                </StackPanel>
+
+                <!-- Observações -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="1" Grid.Row="0">
+                    <Label Content="Obs:" Width="50"/>
+                    <TextBox x:Name="Evento_txtObservacoes" Width="205" MaxLength="500"/>
+                </StackPanel>
+
+                <!-- Lotação máxima -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="2" Grid.Row="1">
+                    <Label Content="Lotação Máx:" Width="100"/>
+                    <TextBox x:Name="Evento_txtCapacidadeMaxima" Width="100" MaxLength="10"/>
+                </StackPanel>
+
+                <!-- Orçamento máximo -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="2" Grid.Row="0">
+                    <Label Content="Orçamento:" Width="100"/>
+                    <TextBox x:Name="Evento_txtOrcamentousado" Width="70" IsReadOnly="True"/>
+                    <Label Content=" / " />
+                    <TextBox x:Name="Evento_txtOrcamento" Width="70"/>
+                </StackPanel>
+
+                <!-- Tipo de Evento -->
+                <StackPanel Orientation="Horizontal" Margin="5" Grid.Column="2" Grid.Row="2">
+                    <Label Content="Tipo de Evento:" Width="100"/>
+                    <ComboBox x:Name="Evento_cmbTipoEvento" Width="150" SelectedIndex="0" DisplayMemberPath="Nome" SelectedValuePath="Id" />
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="2" Margin="0" Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Linha de botões principais -->
+                    <RowDefinition Height="*"/>
+                    <!-- Linha dos DataGrids com botões "Listar" acima -->
+                </Grid.RowDefinitions>
+
+                <!-- Botões principais centralizados -->
+
+
+                <!-- DataGrids com botões Listar acima -->
+                <Grid Grid.Row="1" Margin="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <!-- Participantes -->
+                        <ColumnDefinition Width="1*"/>
+                        <!-- Serviços -->
+                        <ColumnDefinition Width="1*"/>
+                        <!-- Eventos -->
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Botões Listar -->
+                        <RowDefinition Height="*"/>
+                        <!-- DataGrids -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Botões Listar acima de cada DataGrid 
+                    <Button x:Name="TELA_Eventos_btnPesquisar" 
+                Content="Pesquisar Evento" 
+                Grid.Column="0" Grid.Row="0" 
+                Margin="5" Height="30" HorizontalAlignment="Stretch"/>-->
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Grid.Row="0">
+                        <Button x:Name="TELA_Eventos_btnIncluir" Content="Incluir" Width="60" Margin="5" Click="TELA_Eventos_btnIncluir_Click"/>
+                        <Button x:Name="TELA_Eventos_btnAtualizar" Content="Atualizar" Width="60" Margin="5" Click="TELA_Eventos_btnAtualizar_Click"/>
+                        <Button x:Name="TELA_Eventos_btnPesquisar" Content="Pesquisar" Width="60" Margin="5" Click="TELA_Eventos_btnPesquisar_Click"/>
+                        <Button x:Name="TELA_Eventos_btnLimpar" Content="Limpar" Width="60" Margin="5,5,0,5" Click="TELA_Eventos_btnLimpar_Click"/>
+                    </StackPanel>
+
+                    <Button x:Name="TELA_Eventos_btnListarParticipantes" 
+                Content="Listar Participantes" 
+                Grid.Column="1" Grid.Row="0" 
+                            Margin="5,0,5,0"
+                 Height="20" HorizontalAlignment="Stretch" Click="TELA_Eventos_btnListarParticipantes_Click"/>
+
+                    <Button x:Name="TELA_Eventos_btnListarServicos" 
+                Content="Listar Serviços" 
+                Grid.Column="2" Grid.Row="0" 
+                            
+                Height="20"  HorizontalAlignment="Stretch" Click="TELA_Eventos_btnListarServicos_Click"/>
+                    
+                    <DataGrid x:Name="TELA_Eventos_DTG" 
+                  Grid.Column="0" Grid.Row="1" 
+                  AutoGenerateColumns="True" 
+                 
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow" IsReadOnly="True"
+                              SelectedCellsChanged="TELA_Eventos_DTG_seleciona"/>
+
+                    <DataGrid x:Name="TELA_Eventos_Participantes_DTG" 
+                  Grid.Column="1" Grid.Row="1" 
+                  AutoGenerateColumns="True" 
+                 Margin="5,0,5,0"
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                              />
+
+                    <DataGrid x:Name="TELA_Eventos_Servicos_DTG" 
+                  Grid.Column="2" Grid.Row="1" 
+                  AutoGenerateColumns="True"
+                            
+                  
+                  SelectionMode="Extended"
+                  SelectionUnit="FullRow"
+                              CellEditEnding="TELA_Eventos_Servicos_DTG_CellEditEnding" />
+
+
+                </Grid>
             </Grid>
         </Grid>
 

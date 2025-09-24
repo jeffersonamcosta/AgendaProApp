@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -86,7 +87,10 @@ namespace AgendaProApp
         {
             try
             {
-                var jsonString = JsonSerializer.Serialize(body);
+                string jsonString = body is JsonObject jo
+                    ? jo.ToJsonString()
+                    : JsonSerializer.Serialize(body);
+
                 var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
                 var response = await _client.PutAsync(rota, content);
@@ -95,7 +99,7 @@ namespace AgendaProApp
                 var responseString = await response.Content.ReadAsStringAsync();
 
                 if (string.IsNullOrWhiteSpace(responseString))
-                    return null; // Sem conteúdo, ex: NoContent (204)
+                    return null;
 
                 return JsonDocument.Parse(responseString);
             }
@@ -105,6 +109,7 @@ namespace AgendaProApp
                 return null;
             }
         }
+
 
 
 
