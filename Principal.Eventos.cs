@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
+﻿using System.Data;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
@@ -13,28 +10,34 @@ namespace AgendaProApp
     {
         private async void TELA_Eventos_btnIncluir_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(Evento_txtNome.Text) || string.IsNullOrWhiteSpace(Evento_dpInicio.Text))
+            if (CamposValidos())
             {
-                MessageBox.Show("Campos obrigatórios Pendentes.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
 
-            var bodyJson = GetTelaEventoJson();
-            var rota = "eventos/novo";
-            var result = await api.AgendaProPost(rota, bodyJson);
-            MessageBox.Show("Evento incluído com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-            Tela_Eventos_Limpar();
+                var bodyJson = GetTelaEventoJson();
+
+                if (bodyJson.ContainsKey("id"))
+                {
+                    bodyJson.Remove("id");
+                }
+                var rota = "eventos/novo";
+                var result = await api.AgendaProPost(rota, bodyJson);
+                MessageBox.Show("Evento incluído com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                Tela_Eventos_Limpar();
+            }
         }
 
         private async void TELA_Eventos_btnAtualizar_Click(object sender, RoutedEventArgs e)
         {
-            
-            var bodyJson = GetTelaEventoJson();
-            var id = bodyJson["id"].GetValue<int>();
-            var rota = $"eventos/atualiza/{id}";
-            var result = await api.AgendaProPut(rota, bodyJson);
+            if (CamposValidos())
+            {
 
-        
+                var bodyJson = GetTelaEventoJson();
+                var id = bodyJson["id"].GetValue<int>();
+                var rota = $"eventos/atualiza/{id}";
+                var result = await api.AgendaProPut(rota, bodyJson);
+            }
+
+
         }
 
         private void TELA_Eventos_btnPesquisar_Click(object sender, RoutedEventArgs e)
@@ -50,7 +53,7 @@ namespace AgendaProApp
                 table_eventos.Columns.Add("Id", typeof(int));
                 table_eventos.Columns.Add("Nome", typeof(string));
                 table_eventos.Columns.Add("DataInicio", typeof(DateTime));
-                table_eventos.Columns.Add("DataFim", typeof(DateTime));               
+                table_eventos.Columns.Add("DataFim", typeof(DateTime));
                 table_eventos.Columns.Add("Orcamento", typeof(decimal));
                 table_eventos.Columns.Add("CapacidadeMaxima", typeof(int));
                 table_eventos.Columns.Add("Endereco", typeof(string));
@@ -101,6 +104,7 @@ namespace AgendaProApp
             TELA_Eventos_Participantes_DTG.ClearValue(ItemsControl.ItemsSourceProperty);
             TELA_Eventos_Servicos_DTG.ClearValue(ItemsControl.ItemsSourceProperty);
             Evento_txtCapacidadeMaxima.Text = "";
+            Evento_txtCapacidadeUsado.Text = "";
             Evento_txtOrcamento.Text = "";
             Evento_txtOrcamentousado.Text = "";
             Evento_txtCEP.Text = "";
@@ -335,7 +339,7 @@ namespace AgendaProApp
             }
 
             if (!string.IsNullOrWhiteSpace(Evento_txtOrcamento.Text) &&
-                decimal.TryParse(Evento_txtOrcamento.Text, out var orcamento))
+                decimal.TryParse(Evento_txtOrcamentousado.Text, out var orcamento))
             {
                 json["orcamentoMaximo"] = orcamento;
             }
@@ -395,9 +399,63 @@ namespace AgendaProApp
         {
             int total = 0;
 
-            if (TELA_Eventos_Participantes_DTG.ItemsSource is DataView view) { foreach (DataRowView row in view) { bool marcado = row["Convidado"] != DBNull.Value && (bool)row["Selecionado"]; if (marcado) { total++; } } }
+            if (TELA_Eventos_Participantes_DTG.ItemsSource is DataView view) { foreach (DataRowView row in view) { bool marcado = row["Convidado"] != DBNull.Value && (bool)row["Convidado"]; if (marcado) { total++; } } }
             Evento_txtCapacidadeUsado.Text = total.ToString();
 
+        }
+
+        private Boolean OrcamentoValido()
+        {
+            if (string.IsNullOrWhiteSpace(Evento_txtOrcamento.Text) || string.IsNullOrWhiteSpace(Evento_txtOrcamentousado.Text))
+            {
+                return false;
+            }
+            if (decimal.TryParse(Evento_txtOrcamento.Text, out var orcamentoMaximo) &&
+                decimal.TryParse(Evento_txtOrcamentousado.Text, out var orcamentoUsado))
+            {
+                if (orcamentoUsado <= orcamentoMaximo)
+                {
+                    return true;
+                } ;
+            }
+            return false;
+        }
+        private Boolean lotacaoValida()
+        {
+            if (string.IsNullOrWhiteSpace(Evento_txtCapacidadeMaxima.Text) || string.IsNullOrWhiteSpace(Evento_txtCapacidadeUsado.Text))
+            {
+                return false;
+            }
+            if (int.TryParse(Evento_txtCapacidadeMaxima.Text, out var capacidadeMaxima) &&
+                int.TryParse(Evento_txtCapacidadeUsado.Text, out var capacidadeUsada))
+            {
+               if (capacidadeUsada <= capacidadeMaxima){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Boolean CamposValidos()
+        {
+            if (string.IsNullOrWhiteSpace(Evento_txtNome.Text) || string.IsNullOrWhiteSpace(Evento_dpInicio.Text) || Evento_cmbTipoEvento.SelectedValue is not int)
+            {
+                MessageBox.Show("Campos obrigatórios Pendentes.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (!OrcamentoValido())
+            {
+                MessageBox.Show("Não se pode ultrapassar o oirçamento", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+
+            if (!lotacaoValida())
+            {
+                MessageBox.Show("Capacidade máxima não pode ser menor que a capacidade usada.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            return true;
         }
 
     }

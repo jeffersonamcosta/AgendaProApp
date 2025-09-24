@@ -185,7 +185,7 @@
         </Grid>
 
         <!-- TELA_Eventos -->
-        <Grid Grid.Column="1" Margin="10,10,10,10" Visibility="Visible" x:Name="TELA_Eventos">
+        <Grid Grid.Column="1" Margin="10,10,10,10" Visibility="Hidden" x:Name="TELA_Eventos">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <!-- Campos do Evento -->
