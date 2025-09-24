@@ -93,6 +93,8 @@ namespace AgendaProApp
 
                 var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
+                MessageBox.Show($"PUT {rota} com body: {jsonString}", "Debug", MessageBoxButton.OK, MessageBoxImage.Information);
+
                 var response = await _client.PutAsync(rota, content);
                 response.EnsureSuccessStatusCode();
 
