@@ -8,6 +8,7 @@ namespace AgendaProApp
 {
     public partial class Principal
     {
+        private Dictionary<int, JsonElement> _eventos = new();
         private async void TELA_Eventos_btnIncluir_Click(object sender, RoutedEventArgs e)
         {
             if (CamposValidos())
@@ -35,6 +36,7 @@ namespace AgendaProApp
                 var id = bodyJson["id"].GetValue<int>();
                 var rota = $"eventos/atualiza/{id}";
                 var result = await api.AgendaProPut(rota, bodyJson);
+                Tela_Eventos_Limpar();
             }
 
 
@@ -80,6 +82,8 @@ namespace AgendaProApp
                 }
 
                 TELA_Eventos_DTG.ItemsSource = table_eventos.DefaultView;
+                TELA_Eventos_DTG.Columns[0].Visibility = Visibility.Collapsed;
+                TELA_Eventos_DTG.Columns[7].Visibility = Visibility.Collapsed;
             }
             catch (Exception ex)
             {
@@ -151,6 +155,7 @@ namespace AgendaProApp
 
             (table.DefaultView).Sort = "Convidado DESC";
             TELA_Eventos_Participantes_DTG.ItemsSource = table.DefaultView;
+            TELA_Eventos_Participantes_DTG.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void TELA_Eventos_btnListarServicos_Click(object sender, RoutedEventArgs e)
@@ -189,6 +194,7 @@ namespace AgendaProApp
 
             (table.DefaultView).Sort = "Selecionado DESC";
             TELA_Eventos_Servicos_DTG.ItemsSource = table.DefaultView;
+            TELA_Eventos_Servicos_DTG.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private double ObterSomaServicosSelecionados()
@@ -456,6 +462,64 @@ namespace AgendaProApp
                 return false;
             }
             return true;
+        }
+
+        private void Evento_btnNovoTipoEvento_Click(object sender, RoutedEventArgs e)
+        {if (string.IsNullOrWhiteSpace(Evento_NovoTipoEvento.Text))
+            {
+                MessageBox.Show("Descrição do tipo de evento não pode ser vazia.", "Erro", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            var body = new JsonObject
+            {
+                ["descricao"] = Evento_NovoTipoEvento.Text,
+            
+            };
+            var rota = "tipoevento/novo";
+            var result = api.AgendaProPost(rota, body);
+            var idnovo = result.Result.RootElement.GetProperty("id").GetInt32();
+            CarregarTiposEvento();
+            Evento_cmbTipoEvento.SelectedValue = idnovo;
+            Evento_STPNovoTipoEvento.Visibility = Visibility.Hidden;
+
+        }
+
+        private void Evento_cmbTipoEvento_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (Evento_cmbTipoEvento.SelectedIndex == 0 )
+            {
+                Evento_STPNovoTipoEvento.Visibility = Visibility.Visible;
+
+            }
+            else {                 Evento_STPNovoTipoEvento.Visibility = Visibility.Hidden; }
+
+        }
+
+        private async Task CarregarTiposEvento()
+        {
+            try
+            {
+                var json = await api.AgendaProGet("tipoevento/lista");
+                if (json == null) return;
+
+                var dict = new Dictionary<int, string>();
+                dict[0] = "";
+
+                foreach (var item in json.RootElement.EnumerateArray())
+                {
+                    dict[item.GetProperty("id").GetInt32()] = item.GetProperty("descricao").GetString();
+                }
+
+                Evento_cmbTipoEvento.ItemsSource = dict;
+                Evento_cmbTipoEvento.DisplayMemberPath = "Value";
+                Evento_cmbTipoEvento.SelectedValuePath = "Key";
+                Evento_cmbTipoEvento.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao carregar Tipos de Evento: {ex.Message}",
+                    "Erro", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
     }

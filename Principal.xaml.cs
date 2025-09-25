@@ -8,9 +8,9 @@ namespace AgendaProApp
 {
     public partial class Principal : Window
     {
-        private static readonly Regex  regexHora = new Regex(@"^[0-9:]+$");
+        
         private APIAgendaPro api;
-        private Dictionary<int, JsonElement> _eventos = new();
+        
 
         public Principal(APIAgendaPro api)
         {

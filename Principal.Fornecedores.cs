@@ -17,6 +17,7 @@ namespace AgendaProApp
 
             TELA_Fornecedor_Servicos_DTG.ItemsSource = dt.DefaultView;
             TELA_Fornecedor_Servicos_DTG.InitializingNewItem += TELA_Fornecedor_Servicos_DTG_InitializingNewItem;
+            TELA_Fornecedor_Servicos_DTG.Columns[0].Visibility = Visibility.Collapsed; 
         }
 
         private async void TELA_Fornecedor_btnIncluir_Click(object sender, RoutedEventArgs e)
@@ -99,6 +100,8 @@ namespace AgendaProApp
             }
 
             TELA_Fornecedor_DTG.ItemsSource = table.DefaultView;
+            TELA_Fornecedor_DTG.Columns[0].Visibility = Visibility.Collapsed;
+            TELA_Fornecedor_DTG.Columns[1].Visibility = Visibility.Collapsed;
         }
 
         private async void TELA_Fornecedor_DTG_seleciona(object sender, SelectionChangedEventArgs e)
@@ -146,6 +149,8 @@ namespace AgendaProApp
             }
 
             TELA_Fornecedor_Servicos_DTG.ItemsSource = table.DefaultView;
+            TELA_Fornecedor_Servicos_DTG.Columns[0].Visibility = Visibility.Collapsed;
+            TELA_Fornecedor_Servicos_DTG.Columns[1].Visibility = Visibility.Collapsed;
         }
 
         private async Task Inserir_OU_Atualizar_Servicos(int fornecedorId, DataTable tabelaServicos)

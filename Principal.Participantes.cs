@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,6 +9,25 @@ namespace AgendaProApp
 {
     public partial class Principal
     {
+        private Dictionary<int, string> _tiposparticipante   = new();
+
+        public async void CarregarTiposParticipante()
+        {
+            var json = await api.AgendaProGet("participante/tipoparticipante");
+         
+            //var json = jsonTask.Result;
+            _tiposparticipante.Clear();
+            cmbTipoParticipanteId.Items.Clear();
+            cmbTipoParticipanteId.Items.Add(new ComboBoxItem { Content = "Selecione", Tag = 0 });
+            foreach (var item in json.RootElement.EnumerateArray())
+            {
+                var id = item.GetProperty("id").GetInt32();
+                var nome = item.GetProperty("descricao").GetString() ?? "";
+                _tiposparticipante[id] = nome;
+                cmbTipoParticipanteId.Items.Add(new ComboBoxItem { Content = nome, Tag = id });
+            }
+            cmbTipoParticipanteId.SelectedIndex = 0;
+        }
         private async void TELA_Participantes_btnIncluir_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -32,6 +52,26 @@ namespace AgendaProApp
             }
         }
 
+        private void Tela_Participantes_AtualizaLBParticipantes()
+        {
+            TELA_Participantes_LBCadastrado.Content = "";
+            var tipoParticipanteqtd = "";
+            foreach (var tipo in _tiposparticipante)
+            {
+                var count = 0;
+                foreach (DataRowView row in TELA_Participantes_DTG.Items)
+                {
+                    if (Convert.ToInt32(row["TipoParticipanteId"]) == tipo.Key)
+                    {
+                        count++;
+                    }
+                }
+                tipoParticipanteqtd += $" {count} {tipo.Value}, ";
+            }
+            TELA_Participantes_LBCadastrado.Content = $"{TELA_Participantes_DTG.Items.Count} Participantes Sendo: {tipoParticipanteqtd}";
+            
+        }
+
         private async void TELA_Participantes_btnPesquisar_Click(object sender, RoutedEventArgs e)
         {
             var body = Tela_participantes_obterParticipanteJson();
@@ -39,12 +79,14 @@ namespace AgendaProApp
             var json = await jsonTask;
 
             var table = new DataTable();
+           
             table.Columns.Add("Id", typeof(int));
             table.Columns.Add("Nome", typeof(string));
             table.Columns.Add("Documento", typeof(string));
             table.Columns.Add("Telefone", typeof(string));
             table.Columns.Add("Email", typeof(string));
             table.Columns.Add("TipoParticipanteId", typeof(int));
+            table.Columns.Add("TipoParticipante", typeof(string));
             table.Columns.Add("Ativo", typeof(bool));
 
             foreach (var item in json.RootElement.EnumerateArray())
@@ -56,11 +98,18 @@ namespace AgendaProApp
                     item.TryGetProperty("telefone", out var tel) ? tel.GetString() : "",
                     item.TryGetProperty("email", out var mail) ? mail.GetString() : "",
                     item.TryGetProperty("tipoParticipanteId", out var tipo) ? tipo.GetInt32() : 0,
+                    _tiposparticipante[tipo.GetInt32()].ToString(),
                     item.TryGetProperty("ativo", out var ativo) && ativo.GetBoolean()
                 );
             }
 
             TELA_Participantes_DTG.ItemsSource = table.DefaultView;
+            // ocultar id, tipoParticipanteId e ativo 
+            TELA_Participantes_DTG.Columns[0].Visibility = Visibility.Collapsed; 
+            TELA_Participantes_DTG.Columns[5].Visibility = Visibility.Collapsed; 
+            TELA_Participantes_DTG.Columns[7].Visibility = Visibility.Collapsed;
+            Tela_Participantes_AtualizaLBParticipantes();
+
         }
 
         private void TELA_Participantes_DTG_seleciona(object sender, SelectionChangedEventArgs e)
