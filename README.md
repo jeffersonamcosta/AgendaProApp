@@ -117,10 +117,10 @@ Exemplo padrão:
 
 ```json
 "Jwt": {
-  "Key": *Uma string muito longa*,
+  "Key": *UMA STRING MUITO LONGA AQUI*,
   "Issuer": "AgendaProApi",
   "Audience": "AgendaProClients",
-  "DurationMinutes": *Validade do token*
+  "DurationMinutes": *VALIDADE DO TOKEN*
 }
 ```
 
@@ -215,6 +215,76 @@ O aplicativo irá abrir a interface desktop que consome a API.
 
 ---
 
+---
+
+## 🗂️ Modelo DER do Banco de Dados
+
+Abaixo está o modelo **DER (Diagrama Entidade-Relacionamento)** que representa a estrutura do banco do sistema AgendaPro:
+
+<img width="791" height="739" alt="DER" src="https://github.com/user-attachments/assets/acea66ea-0e6d-4790-9d44-7664f748ac5a" />
+
+
+---
+
+### 🔎 Exemplos de Uso
+
+#### 📅 Pesquisa de próximos eventos
+Para saber o próximo evento de um participante (ou eventos onde **estão os mesmos participantes**), basta:
+
+1. Ir na tela de **Eventos**  
+2. Listar os **usuários/participantes**  
+3. Marcar os que deseja  
+4. Clicar em **Pesquisar**  
+
+<img width="990" height="594" alt="Proximos eventos de um participante" src="https://github.com/user-attachments/assets/5b3b2b8e-ee83-42d0-b529-1e46d24b65a3" />
+
+
+---
+
+#### 📊 Grid de exibição dinâmica
+- A **grid** é dinâmica, então é possível **organizar por qualquer coluna**.  
+- A grid também mostra o **tipo de participante** da pesquisa.  
+- Todos os campos são pesquisáveis:
+  - Se selecionar o **tipo de participante** e clicar em pesquisar → retorna apenas os participantes desse tipo.
+#### 👤 Edição de participantes
+- Ao selecionar um participante na lista, o sistema já carrega os **campos para edição**.  
+- Após ajustar as informações, basta clicar em **Atualizar**.  
+
+<img width="984" height="595" alt="Contagem participantes" src="https://github.com/user-attachments/assets/5eaa4f1e-0107-4f60-9eba-8e0bd7a8416c" />
+
+---
+
+#### 🏢 Fornecedores e serviços
+- Um **fornecedor pode ter N serviços**.  
+- Para cadastrar um novo serviço:
+  1. Escreva o nome e o valor no **grid correspondente**  
+  2. Clique em **Atualizar** (ou em **Incluir**, se estiver criando um novo fornecedor).  
+
+<img width="986" height="587" alt="Novo servico fornecedor" src="https://github.com/user-attachments/assets/ce79cce1-2f76-4ea9-86b4-2b7788930c84" />
+
+
+---
+
+## 🌐 API e Comunicação
+
+Toda comunicação entre o **Frontend (WPF)** e o **Backend (API)** é feita por **requisições REST em JSON**.  
+<img width="1488" height="903" alt="Api funciona" src="https://github.com/user-attachments/assets/24598734-3970-4fdf-b64d-c4202e471471" />
+
+👉 Na prática, é possível operar o sistema **somente com o Postman** ou até mesmo desenvolver outra interface gráfica, mantendo o mesmo backend.
+
+### 🔐 Autenticação
+- É necessário possuir um **usuário válido** para receber um **token JWT válido**.  
+- Sem o token, a API rejeita qualquer ação.  
+
+<img width="1491" height="432" alt="API TOKEN" src="https://github.com/user-attachments/assets/941af3a9-494f-41e5-a3a9-b5e6e395a45e" />
+
+<img width="1495" height="438" alt="sem token" src="https://github.com/user-attachments/assets/68c1bcdb-de8f-466d-9c8d-7291423c5fbf" />
+
+
+---
+
+
+
 ## 📊 Funcionalidades Principais
 
 ✅ **Participantes** → Cadastro, pesquisa, atualização e Tipos de participantes mais frequentes.
@@ -239,4 +309,3 @@ Se for usar SQL Server local, exemplo:
 👨‍💻 desenvolvido com ❤️ por [**Jefferson Costa**](https://www.linkedin.com/in/jeffersonamcosta)
 
 ---
-
